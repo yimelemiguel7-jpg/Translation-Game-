@@ -1,5 +1,3 @@
-# Translation-Game-
-A simple translation game developed to help improve understanding in different fields of studies
 <!DOCTYPE html>
 <html>
 <head>
