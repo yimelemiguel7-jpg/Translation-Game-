@@ -231,6 +231,7 @@ score=0;
 showQuestion();
 }
 
+
 function showQuestion(){
 timeLeft=15;
 document.getElementById("timer").textContent=timeLeft;
