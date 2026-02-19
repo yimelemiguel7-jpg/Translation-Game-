@@ -1,2 +1,298 @@
 # Translation-Game-
 A simple translation game developed to help improve understanding in different fields of studies
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ABC Learn Translation</title>
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(#9ed9e6,#b6f0f7);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+.screen{
+width:900px;
+height:520px;
+background:linear-gradient(#aee9f3,#d8f9ff);
+border-radius:20px;
+position:relative;
+overflow:hidden;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+.hills{
+position:absolute;
+bottom:0;
+width:100%;
+height:150px;
+background:linear-gradient(#6dbb63,#4e9e4a);
+border-top-left-radius:200px;
+border-top-right-radius:200px;
+}
+.header{
+position:absolute;
+top:20px;
+left:30px;
+background:black;
+color:white;
+padding:20px;
+border:6px solid orange;
+font-size:28px;
+}
+.play-btn{
+position:absolute;
+top:200px;
+right:100px;
+background:#2ecc71;
+color:white;
+font-size:30px;
+padding:20px 50px;
+border:none;
+cursor:pointer;
+border-radius:10px;
+}
+.footer{
+position:absolute;
+bottom:0;
+width:100%;
+background:#e57373;
+color:white;
+padding:10px;
+text-align:left;
+font-size:14px;
+}
+.game{
+display:none;
+padding:40px;
+text-align:center;
+}
+.question{
+font-size:24px;
+margin-bottom:30px;
+font-weight:bold;
+}
+.options{
+display:flex;
+flex-direction:column;
+gap:15px;
+align-items:center;
+}
+.option{
+width:60%;
+padding:15px;
+background:#5dade2;
+border-radius:10px;
+cursor:pointer;
+font-size:18px;
+color:white;
+transition:0.3s;
+}
+.option:hover{transform:scale(1.05);}
+.correct{border:3px solid lime;box-shadow:0 0 15px lime;}
+.wrong{border:3px solid red;box-shadow:0 0 15px red;}
+.timer{
+position:absolute;
+top:20px;
+right:30px;
+font-size:20px;
+background:#3498db;
+color:white;
+padding:10px 20px;
+border-radius:50px;
+}
+.score-screen{
+display:none;
+text-align:center;
+padding-top:150px;
+font-size:28px;
+}
+.next-btn{
+margin-top:30px;
+padding:15px 40px;
+font-size:20px;
+background:#2ecc71;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="screen" id="home">
+<div class="header">A B C<br>Learn Translation !!!</div>
+<button class="play-btn" onclick="startGame()">PLAY ▶</button>
+<div class="hills"></div>
+<div class="footer">Translation made easy</div>
+</div>
+
+<div class="screen game" id="game">
+<div class="timer" id="timer">15</div>
+<div class="question" id="question"></div>
+<div class="options" id="options"></div>
+<div class="hills"></div>
+<div class="footer">Translation made easy</div>
+</div>
+
+<div class="screen score-screen" id="scoreScreen">
+<div id="scoreText"></div>
+<button class="next-btn" onclick="nextSection()">Next Section</button>
+</div>
+
+<script>
+
+const questions = [
+
+{q:"Ordinateur",a:"Computer",w:["Processor","Calculator"]},
+{q:"Réseau",a:"Network",w:["Cable","Server"]},
+{q:"Logiciel",a:"Software",w:["Hardware","Firmware"]},
+{q:"Matériel",a:"Hardware",w:["Software","Application"]},
+{q:"Base de données",a:"Database",w:["Spreadsheet","Folder"]},
+{q:"Clavier",a:"Keyboard",w:["Mouse","Monitor"]},
+{q:"Souris",a:"Mouse",w:["Keyboard","Scanner"]},
+{q:"Serveur",a:"Server",w:["Client","Router"]},
+{q:"Algorithme",a:"Algorithm",w:["Program","Code"]},
+{q:"Programmation",a:"Programming",w:["Debugging","Compiling"]},
+{q:"Mémoire",a:"Memory",w:["Storage","Processor"]},
+{q:"Sécurité informatique",a:"Cybersecurity",w:["Networking","Encryption"]},
+{q:"Système d'exploitation",a:"Operating System",w:["Application","Driver"]},
+{q:"Compilateur",a:"Compiler",w:["Interpreter","Debugger"]},
+{q:"Pare-feu",a:"Firewall",w:["Router","Switch"]},
+{q:"Navigateur",a:"Browser",w:["Editor","Compiler"]},
+{q:"Fichier",a:"File",w:["Folder","Program"]},
+{q:"Dossier",a:"Folder",w:["File","Database"]},
+{q:"Stockage",a:"Storage",w:["Memory","Processor"]},
+{q:"Processeur",a:"Processor",w:["Monitor","Keyboard"]},
+{q:"Carte mère",a:"Motherboard",w:["Hard Drive","GPU"]},
+{q:"Disque dur",a:"Hard Drive",w:["RAM","CPU"]},
+{q:"Réseau local",a:"Local Network",w:["Cloud","Firewall"]},
+{q:"Informatique en nuage",a:"Cloud Computing",w:["USB Storage","LAN"]},
+{q:"Cryptage",a:"Encryption",w:["Decryption","Firewall"]},
+{q:"Débogage",a:"Debugging",w:["Compiling","Testing"]},
+{q:"Application",a:"Application",w:["Driver","Hardware"]},
+{q:"Pilote",a:"Driver",w:["Browser","Server"]},
+{q:"Interface utilisateur",a:"User Interface",w:["Database","Protocol"]},
+{q:"Protocole",a:"Protocol",w:["Algorithm","File"]},
+
+{q:"Dispositif qui connecte plusieurs ordinateurs ensemble",a:"Network",w:["Database","Algorithm"]},
+{q:"Programme qui traduit le code source en langage machine",a:"Compiler",w:["Editor","Browser"]},
+{q:"Système qui gère le matériel et les logiciels",a:"Operating System",w:["Application","Firewall"]},
+{q:"Ensemble de règles pour résoudre un problème",a:"Algorithm",w:["Hardware","Memory"]},
+{q:"Protection des systèmes contre les attaques numériques",a:"Cybersecurity",w:["Programming","Cloud Computing"]},
+{q:"Appareil permettant de pointer et cliquer",a:"Mouse",w:["Keyboard","Monitor"]},
+{q:"Mémoire temporaire utilisée par le processeur",a:"RAM",w:["Hard Drive","SSD"]},
+{q:"Programme utilisé pour naviguer sur Internet",a:"Browser",w:["Compiler","Debugger"]},
+{q:"Stockage permanent des données",a:"Hard Drive",w:["RAM","Cache"]},
+{q:"Réseau mondial reliant des millions d'ordinateurs",a:"Internet",w:["LAN","Server"]},
+{q:"Langage utilisé pour structurer les pages web",a:"HTML",w:["Python","SQL"]},
+{q:"Langage utilisé pour styliser les pages web",a:"CSS",w:["Java","C++"]},
+{q:"Langage de programmation orienté objet populaire",a:"Java",w:["HTML","HTTP"]},
+{q:"Base de données relationnelle populaire",a:"MySQL",w:["Photoshop","Linux"]},
+{q:"Système open source basé sur Unix",a:"Linux",w:["Windows","Android"]},
+{q:"Technique de protection des données par code secret",a:"Encryption",w:["Compression","Formatting"]},
+{q:"Appareil qui dirige le trafic réseau",a:"Router",w:["Mouse","Printer"]},
+{q:"Appareil qui relie des périphériques",a:"Switch",w:["Monitor","Scanner"]},
+{q:"Langage utilisé pour interroger les bases de données",a:"SQL",w:["HTML","CSS"]},
+{q:"Unité centrale de traitement",a:"CPU",w:["GPU","RAM"]},
+{q:"Carte graphique",a:"GPU",w:["CPU","SSD"]},
+{q:"Méthode de stockage rapide sans pièces mobiles",a:"SSD",w:["HDD","RAM"]},
+{q:"Processus de recherche d'erreurs dans un programme",a:"Debugging",w:["Compiling","Installing"]},
+{q:"Programme malveillant",a:"Malware",w:["Software","Hardware"]},
+{q:"Réseau privé sécurisé",a:"VPN",w:["LAN","DNS"]},
+{q:"Système de gestion de versions populaire",a:"Git",w:["HTML","Excel"]},
+{q:"Plateforme de collaboration pour développeurs",a:"GitHub",w:["Google","Facebook"]},
+{q:"Langage populaire pour l'intelligence artificielle",a:"Python",w:["HTML","CSS"]},
+{q:"Ensemble de règles de communication réseau",a:"Protocol",w:["Algorithm","Driver"]},
+{q:"Programme qui affiche des pages web",a:"Web Browser",w:["Compiler","IDE"]}
+
+];
+
+let sectionQuestions=[];
+let index=0;
+let score=0;
+let timerInterval;
+let timeLeft=15;
+
+function startGame(){
+document.getElementById("home").style.display="none";
+startSection();
+}
+
+function startSection(){
+document.getElementById("scoreScreen").style.display="none";
+document.getElementById("game").style.display="block";
+sectionQuestions=questions.sort(()=>Math.random()-0.5).slice(0,10);
+index=0;
+score=0;
+showQuestion();
+}
+
+function showQuestion(){
+timeLeft=15;
+document.getElementById("timer").textContent=timeLeft;
+const current=sectionQuestions[index];
+document.getElementById("question").textContent=current.q;
+const optionsDiv=document.getElementById("options");
+optionsDiv.innerHTML="";
+let answers=[current.a,...current.w];
+answers.sort(()=>Math.random()-0.5);
+answers.forEach(ans=>{
+let div=document.createElement("div");
+div.className="option";
+div.textContent=ans;
+div.onclick=()=>selectAnswer(div,ans,current.a);
+optionsDiv.appendChild(div);
+});
+clearInterval(timerInterval);
+timerInterval=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").textContent=timeLeft;
+if(timeLeft<=0){
+clearInterval(timerInterval);
+nextQuestion();
+}
+},1000);
+}
+
+function selectAnswer(element,selected,correct){
+clearInterval(timerInterval);
+const options=document.querySelectorAll(".option");
+options.forEach(opt=>{
+if(opt.textContent===correct){
+opt.classList.add("correct");
+}else{
+opt.classList.add("wrong");
+}
+});
+if(selected===correct){score++;}
+setTimeout(nextQuestion,2000);
+}
+
+function nextQuestion(){
+index++;
+if(index>=10){
+endSection();
+}else{
+showQuestion();
+}
+}
+
+function endSection(){
+document.getElementById("game").style.display="none";
+document.getElementById("scoreScreen").style.display="block";
+document.getElementById("scoreText").innerText="Section Completed!\nYour Score: "+score+" / 10";
+}
+
+function nextSection(){
+startSection();
+}
+
+</script>
+</body>
+</html>
