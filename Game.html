@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Learn Translation</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: grey;
+    text-align:center;
+    color:black;
+}
+
+.page{
+    display:none;
+    padding:40px;
+}
+
+.active{
+    display:block;
+}
+
+/* HOME */
+.logo-box{
+    width:250px;
+    margin:auto;
+    padding:20px;
+    border:5px solid red;
+    background:black;
+    color:white;
+}
+
+.play-btn{
+    background:green;
+    color:white;
+    padding:15px 40px;
+    font-size:20px;
+    border:none;
+    margin:10px;
+}
+
+.help-btn{
+    background:red;
+    color:white;
+    padding:15px 40px;
+    font-size:20px;
+    border:none;
+    margin:10px;
+}
+
+/* MENU */
+.menu-btn{
+    background:#ff4f7b;
+    padding:10px 30px;
+    margin:10px;
+    border:none;
+    font-weight:bold;
+}
+
+.next-btn{
+    background:lightgreen;
+    padding:10px 40px;
+    border:none;
+    font-weight:bold;
+}
+
+/* GAME */
+.option{
+    background:yellow;
+    padding:10px;
+    margin:10px auto;
+    width:200px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.correct{
+    box-shadow:0 0 15px green;
+}
+
+.wrong{
+    box-shadow:0 0 15px red;
+}
+
+.timer-circle{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    border:8px solid red;
+    line-height:65px;
+    font-weight:bold;
+    margin:auto;
+}
+
+/* SCORE */
+.score-circle{
+    background:orange;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    line-height:120px;
+    font-size:20px;
+    font-weight:bold;
+    margin:20px auto;
+}
+
+.score-btn{
+    background:#ff4f7b;
+    padding:10px 30px;
+    margin:10px;
+    border:none;
+}
+
+/* CONTACT BOX */
+.contact{
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    background:red;
+    color:white;
+    padding:10px;
+    font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div id="home" class="page active">
+    <div class="logo-box">
+        <h2>ABC</h2>
+        <p>Learn<br>Translation !!!</p>
+    </div>
+    <br>
+    <button class="play-btn" onclick="showMenu()">PLAY ▶</button><br>
+    <button class="help-btn" onclick="showHelp()">HELP ?</button>
+</div>
+
+<!-- HELP -->
+<div id="help" class="page">
+    <h2>HELP ?</h2>
+
+<p>Welcome to Learn Translation, a game created to help ameliorate communication in different domains.<br>
+Bienvenue sur Learn Translation, un jeu cree pour ameliorer la communication dans divers domaines.</p>
+
+<h3>RULES/REGLES</h3>
+
+<p>
+1. Language select (choose question language).<br>
+2. Select difficulty.<br>
+3. Each question is to be answered within a period of 15 seconds.<br>
+4. For each correct answer you are awarded a point.
+</p>
+
+<p>
+1. Choisir la langue (Langue de la question).<br>
+2. Choisir la difficulte.<br>
+3. Pour chaque question il y a 15 secondes pour repondre.<br>
+4. Chaque bonne reponse vaut 1 point.
+</p>
+
+<button onclick="goHome()">MENU</button>
+
+<div class="contact">
++237 670 682 403<br>
+yimelemiguel7@gmail.com
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="page">
+<h2>QUESTION LANGUAGE</h2>
+<button class="menu-btn" onclick="setLang('en')">ENGLISH</button>
+<button class="menu-btn" onclick="setLang('fr')">FRENCH</button>
+
+<h2>DIFFICULTY</h2>
+<button class="menu-btn" onclick="setDiff('easy')">EASY</button>
+<button class="menu-btn" onclick="setDiff('medium')">MEDIUM</button>
+
+<br><br>
+<button class="next-btn" onclick="startGame()">NEXT</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="page">
+<div class="timer-circle" id="timer">15</div>
+<h2 id="question"></h2>
+<div id="options"></div>
+</div>
+
+<!-- SCORE -->
+<div id="score" class="page">
+<h2>YOUR SCORE</h2>
+<div class="score-circle" id="finalScore"></div>
+
+<button class="score-btn" onclick="startGame()">NEW GAME</button>
+<button class="score-btn" onclick="goHome()">MENU</button>
+</div>
+
+<script>
+
+/* 50 WORDS */
+const data = [
+{en:"Computer",fr:"Ordinateur",def_en:"Electronic machine that processes data.",def_fr:"Machine electronique qui traite des donnees."},
+{en:"Keyboard",fr:"Clavier",def_en:"Input device with keys.",def_fr:"Peripherique d'entree avec des touches."},
+{en:"Mouse",fr:"Souris",def_en:"Pointing device.",def_fr:"Peripherique de pointage."},
+{en:"Printer",fr:"Imprimante",def_en:"Device that prints documents.",def_fr:"Appareil qui imprime des documents."},
+{en:"Screen",fr:"Ecran",def_en:"Displays visual output.",def_fr:"Affiche les informations visuelles."},
+{en:"Network",fr:"Reseau",def_en:"Connected computers system.",def_fr:"Systeme d'ordinateurs connectes."},
+{en:"Server",fr:"Serveur",def_en:"Provides services to clients.",def_fr:"Fournit des services aux clients."},
+{en:"Database",fr:"Base de donnees",def_en:"Organized data collection.",def_fr:"Collection organisee de donnees."},
+{en:"Software",fr:"Logiciel",def_en:"Programs on a computer.",def_fr:"Programmes d'un ordinateur."},
+{en:"Hardware",fr:"Materiel",def_en:"Physical computer parts.",def_fr:"Parties physiques de l'ordinateur."},
+{en:"Internet",fr:"Internet",def_en:"Global network.",def_fr:"Reseau mondial."},
+{en:"File",fr:"Fichier",def_en:"Stored data unit.",def_fr:"Unite de donnees stockees."},
+{en:"Folder",fr:"Dossier",def_en:"Container for files.",def_fr:"Conteneur de fichiers."},
+{en:"Password",fr:"Mot de passe",def_en:"Secret security code.",def_fr:"Code secret de securite."},
+{en:"Security",fr:"Securite",def_en:"Protection of systems.",def_fr:"Protection des systemes."},
+{en:"Browser",fr:"Navigateur",def_en:"Accesses websites.",def_fr:"Permet d'acceder aux sites web."},
+{en:"Website",fr:"Site Web",def_en:"Collection of web pages.",def_fr:"Ensemble de pages web."},
+{en:"Application",fr:"Application",def_en:"Software program.",def_fr:"Programme informatique."},
+{en:"Cloud",fr:"Nuage",def_en:"Online storage service.",def_fr:"Service de stockage en ligne."},
+{en:"Program",fr:"Programme",def_en:"Set of instructions.",def_fr:"Ensemble d'instructions."},
+{en:"Algorithm",fr:"Algorithme",def_en:"Step by step problem solving process.",def_fr:"Processus etape par etape pour resoudre un probleme."},
+{en:"Data",fr:"Donnees",def_en:"Information processed by computer.",def_fr:"Informations traitees par ordinateur."},
+{en:"CPU",fr:"Processeur",def_en:"Main processing unit.",def_fr:"Unite principale de traitement."},
+{en:"RAM",fr:"Memoire vive",def_en:"Temporary memory.",def_fr:"Memoire temporaire."},
+{en:"Firewall",fr:"Pare-feu",def_en:"Network security system.",def_fr:"Systeme de securite reseau."}
+];
+
+let language="en";
+let difficulty="easy";
+let score=0;
+let questionCount=0;
+let current;
+let timer;
+let timeLeft=15;
+
+function showMenu(){switchPage("menu")}
+function showHelp(){switchPage("help")}
+function goHome(){switchPage("home")}
+
+function switchPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function setLang(l){language=l}
+function setDiff(d){difficulty=d}
+
+function startGame(){
+score=0;
+questionCount=0;
+switchPage("game");
+nextQuestion();
+}
+
+function nextQuestion(){
+if(questionCount==10){endGame();return;}
+questionCount++;
+
+current=data[Math.floor(Math.random()*data.length)];
+
+let questionText=language=="en"?current.def_en:current.def_fr;
+let correctAnswer=language=="en"?current.fr:current.en;
+
+document.getElementById("question").innerText=questionText;
+
+let options=[correctAnswer];
+while(options.length<3){
+let rand=data[Math.floor(Math.random()*data.length)];
+let opt=language=="en"?rand.fr:rand.en;
+if(!options.includes(opt)) options.push(opt);
+}
+options.sort(()=>Math.random()-0.5);
+
+let container=document.getElementById("options");
+container.innerHTML="";
+options.forEach(opt=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=opt;
+div.onclick=()=>checkAnswer(div,opt==correctAnswer);
+container.appendChild(div);
+});
+
+startTimer();
+}
+
+function checkAnswer(element,correct){
+clearInterval(timer);
+if(correct){
+score++;
+if(difficulty=="easy") element.classList.add("correct");
+}else{
+if(difficulty=="easy") element.classList.add("wrong");
+}
+setTimeout(nextQuestion,1000);
+}
+
+function startTimer(){
+timeLeft=15;
+document.getElementById("timer").innerText=timeLeft;
+timer=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").innerText=timeLeft;
+if(timeLeft==0){
+clearInterval(timer);
+nextQuestion();
+}
+},1000);
+}
+
+function endGame(){
+switchPage("score");
+document.getElementById("finalScore").innerText=score+"/10";
+}
+
+</script>
+
+</body>
+</html>
